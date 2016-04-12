@@ -357,19 +357,7 @@
  * functions called from only one place. There might still be some
  * functions that should have this macro.
  */
-#ifdef AMIGA
-#define INLINE __inline /* Amiga compiler SAS/C 6.x supports this! */
-#else
 #define INLINE /* don't support that kind of stuff */
-#endif
-
-#if defined(AMIGA) && defined(SHARED)
-#define PREFIX __asm __saveds
-#define REG(x) register __ ## x
-#else
-#define PREFIX
-#define REG(x)
-#endif
 
 /*
  * SBSIZE defines the number of hash-table slots for the symbol table.

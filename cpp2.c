@@ -628,7 +628,6 @@ ReturnCode openinclude( struct Global *global,
     char **incptr;
     char tmpname[NWORK]; /* Filename work area    */
     int len;
-    ReturnCode ret;
 
     #if HOST == SYS_AMIGADOS
     if( strchr (filename, ':') != NULL )
@@ -669,7 +668,7 @@ ReturnCode openinclude( struct Global *global,
      */
     for( incptr = global->incdir; incptr < global->incend; incptr++ )
         {
-        len = strlen(*incptr);
+        len = (int)strlen(*incptr);
 
         if( len + strlen(filename) >= sizeof(tmpname) )
             {
