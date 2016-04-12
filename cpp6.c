@@ -750,7 +750,7 @@ int get(struct Global *global)
       if(file->bptr != NULL) {
         goto newline;           /* process the line     */
       } else {
-          global->filesystem->close(global->filesystem->userptr, file->fp);           /* Close finished file  */
+        if (file->fp != global->inputio) global->filesystem->close(global->filesystem->userptr, file->fp);           /* Close finished file  */
         if ((global->infile = file->parent) != NULL) {
           /*
            * There is an "ungotten" newline in the current
