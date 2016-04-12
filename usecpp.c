@@ -117,9 +117,9 @@ struct Library *FPPBase=NULL;
 #define DEFAULT_CPP_PREFS_FILE "$HOME/cpp.prefs"
 #endif
 
-FILE_LOCAL char PREFIX *own_input(char *, int, void *);
-FILE_LOCAL void PREFIX own_output(int, void *);
-FILE_LOCAL void PREFIX own_error(void *, char *, va_list);
+FILE_LOCAL char *own_input(char *, int, void *);
+FILE_LOCAL void own_output(int, void *);
+FILE_LOCAL void own_error(void *, char *, va_list);
 FILE_LOCAL int SetOptions(int, char **, struct fppTag **);
 FILE_LOCAL char GetPrefs(struct fppTag **, char **);
 FILE_LOCAL char DoString(struct fppTag **, char *);
@@ -251,19 +251,19 @@ int main(int argc, char **argv)
 
 
 FILE_LOCAL
-char PREFIX *own_input(char *buffer, int size, void *userdata)
+char *own_input(char *buffer, int size, void *userdata)
 {
   return(fgets(buffer, size, stdin));
 }
 
 FILE_LOCAL
-void PREFIX own_output(int c, void *userdata)
+void own_output(int c, void *userdata)
 {
   putchar(c);
 }
 
 FILE_LOCAL
-void PREFIX own_error(void *userdata, char *format, va_list arg)
+void own_error(void *userdata, char *format, va_list arg)
 {
   vfprintf(stderr, format, arg);
 }
@@ -276,7 +276,7 @@ char GetPrefs(struct fppTag **tagptr, char **string)
   unsigned  Length_U;
   char     *PrefsBuffer_PC;
   char ret= 0;
-  char *environ;
+  char *env;
 
   *string = NULL;
 
@@ -301,7 +301,7 @@ char GetPrefs(struct fppTag **tagptr, char **string)
     }
   }
 
-  if(environ = getenv("CPP_PREFS")) {
+  if(env = getenv("CPP_PREFS")) {
     ret= !DoString(tagptr, environ);
     if(ret && *string)
       free( *string );
