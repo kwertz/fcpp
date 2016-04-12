@@ -746,16 +746,11 @@ int get(struct Global *global)
        * from that certain file!
        */
 
-      if(global->input && global->first_file && !strcmp(global->first_file, file->filename))
-        file->bptr = global->input(file->buffer, NBUFF, global->userdata);
-      else
-        file->bptr = fgets(file->buffer, NBUFF, file->fp);
+      file->bptr = file->fp->gets(file->fp->userptr, file->buffer, NBUFF);
       if(file->bptr != NULL) {
         goto newline;           /* process the line     */
       } else {
-        if(!(global->input && global->first_file && !strcmp(global->first_file, file->filename)))
-          /* If the input function isn't user supplied, close the file! */
-          fclose(file->fp);           /* Close finished file  */
+          global->filesystem->close(global->filesystem->userptr, file->fp);           /* Close finished file  */
         if ((global->infile = file->parent) != NULL) {
           /*
            * There is an "ungotten" newline in the current

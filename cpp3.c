@@ -32,10 +32,10 @@ ReturnCode openfile(struct Global *global, char *filename)
    * This is called only from openfile() in cpp2.c.
    */
 
-  FILE *fp;
+  struct fppIOCallbacks *fp;
   ReturnCode ret;
 
-  if ((fp = fopen(filename, "r")) == NULL)
+  if ((fp = global->filesystem->open(global->filesystem->userptr, filename, "r")) == NULL)
     ret=FPP_OPEN_ERROR;
   else
     ret=addfile(global, fp, filename);
@@ -50,7 +50,7 @@ ReturnCode openfile(struct Global *global, char *filename)
 }
 
 ReturnCode addfile(struct Global *global,
-                   FILE *fp,            /* Open file pointer */
+                   struct fppIOCallbacks *fp,            /* Open file pointer */
                    char *filename)      /* Name of the file  */
 {
   /*
@@ -237,12 +237,12 @@ int dooptions(struct Global *global, struct fppTag *tags)
       strcpy(global->work, tags->data);    /* Remember input filename */
       global->first_file=tags->data;
       break;
-    case FPPTAG_INPUT:
-      global->input=(char *(*)(char *, int, void *))tags->data;
-      break;
-    case FPPTAG_OUTPUT:
-      global->output=(void (*)(int, void *))tags->data;
-      break;
+	case FPPTAG_INPUTIO:
+	  global->inputio = (struct fppIOCallbacks*)tags->data;
+	  break;
+	case FPPTAG_OUTPUTIO:
+	  global->outputio = (struct fppIOCallbacks*)tags->data;
+	  break;
     case FPPTAG_ERROR:
       global->error=(void (*)(void *, char *, va_list))tags->data;
       break;
@@ -258,6 +258,9 @@ int dooptions(struct Global *global, struct fppTag *tags)
     case FPPTAG_WEBMODE:
       global->webmode=(tags->data?1:0);
       break;
+	case FPPTAG_FILESYSTEMCALLBACKS:
+	  global->filesystem = (struct fppFileSystemCallbacks*)tags->data;
+	  break;
     default:
       cwarn(global, WARN_INTERNAL_ERROR, NULL);
       break;

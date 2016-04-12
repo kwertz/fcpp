@@ -41,6 +41,18 @@ struct fppTag {
   void *data;
 };
 
+struct fppIOCallbacks {
+	char *(*gets)(void *userptr, char *str, int num);
+	int (*putc)(void *userptr, int character);
+	void *userptr;
+};
+
+struct fppFileSystemCallbacks {
+	struct fppIOCallbacks *(*open)(void *userptr, const char *filename, const char *mode);
+	int (*close)(void *userptr, struct fppIOCallbacks *stream);
+	void *userptr;
+};
+
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -89,11 +101,11 @@ struct fppTag {
 /* Initial input file name: */
 #define FPPTAG_INPUT_NAME 11 /* data is string */
 
-/* Input function: */
-#define FPPTAG_INPUT 12 /* data is an input funtion */
+/* Input callbacks: */
+#define FPPTAG_INPUTIO 12 /* data is a pointer to the fppIOCallbacks structure */
 
-/* Output function: */
-#define FPPTAG_OUTPUT 13 /* data is an output function */
+/* Output callbacks: */
+#define FPPTAG_OUTPUTIO 13 /* data is a pointer to the fppIOCallbacks structure */
 
 /* User data, sent in the last argument to the input function: */
 #define FPPTAG_USERDATA 14 /* data is user data */
@@ -155,5 +167,8 @@ struct fppTag {
 
 /* Switch on WWW-mode */
 #define FPPTAG_WEBMODE 33
+
+/* (Virtual) file system callbacks */
+#define FPPTAG_FILESYSTEMCALLBACKS 34
 
 int fppPreProcess(struct fppTag *);

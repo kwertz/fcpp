@@ -199,15 +199,11 @@ struct Global {
 
   int evalue;                   /* Current value from evallex() */
 
-  char *(*input)(char *, int, void *);  /* Input function */
-
   char *first_file;             /* Preprocessed file. */
 
-  void *userdata;               /* Data sent to input function */
+  void *userdata;               /* Data sent to error function */
 
-  void (*output)(int, void *);  /* output function */
-
-  void (*error)(void *, char *, va_list);       /* error function */
+  void (*error)(void *, char *, va_list);    /* error function */
 
   char linelines;
 
@@ -249,6 +245,12 @@ struct Global {
   char outputfunctions;  /* output all discovered functions to stderr! */
 
   char webmode; /* WWW process mode */
+
+  struct fppFileSystemCallbacks *filesystem; /* user-defined callbacks for opening/closing files */
+
+  struct fppIOCallbacks *inputio; /* input callbacks */
+
+  struct fppIOCallbacks *outputio; /* output callbacks */
 };
 
 typedef enum {
@@ -371,7 +373,7 @@ void Putchar(struct Global *, int);
 void Putstring(struct Global *, char *);
 void Putint(struct Global *, int);
 char *savestring(struct Global *, char *);
-ReturnCode addfile(struct Global *, FILE *, char *);
+ReturnCode addfile(struct Global *, struct fppIOCallbacks *, char *);
 int catenate(struct Global *, ReturnCode *);
 void cerror(struct Global *, ErrorCode, ...);
 ReturnCode control(struct Global *, int *);

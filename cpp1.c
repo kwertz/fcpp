@@ -99,11 +99,8 @@ int fppPreProcess(struct fppTag *tags)
   global->macro=NULL;
   global->evalue=0;
 
-  global->input=NULL;
-  global->output=NULL;
   global->error=NULL;
   global->first_file=NULL;
-  global->userdata=NULL;
 
   global->linelines=TRUE;
   global->warnillegalcpp = FALSE;
@@ -128,7 +125,7 @@ int fppPreProcess(struct fppTag *tags)
   if(ret)
     return(ret);
   dooptions(global, tags);  /* Command line -flags  */
-  ret=addfile(global, stdin, global->work); /* "open" main input file       */
+  ret=addfile(global, global->inputio, global->work); /* "open" main input file       */
 
   global->out = global->outputfile;
 
@@ -141,8 +138,6 @@ int fppPreProcess(struct fppTag *tags)
     cerror(global, ERROR_IFDEF_DEPTH, i);
 #endif
   }
-  fflush(stdout);
-  fclose(stdout);
 
   if (global->errors > 0 && !global->eflag)
     return(IO_ERROR);
@@ -515,14 +510,8 @@ void Putchar(struct Global *global, int c)
    */
   if(!global->out)
     return;
-#if defined(UNIX)
-  if(global->output)
-    global->output(c, global->userdata);
-  else
-    putchar(c);
-#else /* amiga */
-  global->output(c, global->userdata);
-#endif
+
+  global->outputio->putc(global->outputio->userptr, c);
 }
 
 void Putstring(struct Global *global, char *string)

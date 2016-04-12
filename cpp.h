@@ -180,7 +180,7 @@ typedef struct defbuf {
 typedef struct fileinfo {
 	char		*bptr;		/* Buffer pointer	*/
 	int		line;		/* for include or macro */
-	FILE		*fp;		/* File if non-null	*/
+	struct fppIOCallbacks		*fp;		/* File if non-null	*/
 	struct fileinfo *parent;	/* Link to includer	*/
 	char		*filename;	/* File/macro name	*/
 	char		*progname;	/* From #line statement */

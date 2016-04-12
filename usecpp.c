@@ -78,9 +78,11 @@ SOFTWARE.
 #define CPP_PREFS_FILE "cpp.prefs"
 #define DEFAULT_CPP_PREFS_FILE "$HOME/cpp.prefs"
 
-FILE_LOCAL char *own_input(char *, int, void *);
-FILE_LOCAL void own_output(int, void *);
+FILE_LOCAL char *own_input(void *, char *, int);
+FILE_LOCAL int own_output(void *, int);
 FILE_LOCAL void own_error(void *, char *, va_list);
+FILE_LOCAL struct fppIOCallbacks *own_open(void *, const char *filename, const char *mode);
+FILE_LOCAL int own_close(void *, struct fppIOCallbacks *stream);
 FILE_LOCAL int SetOptions(int, char **, struct fppTag **);
 FILE_LOCAL char GetPrefs(struct fppTag **, char **);
 FILE_LOCAL char DoString(struct fppTag **, char *);
@@ -119,8 +121,16 @@ int main(int argc, char **argv)
     return(-1);
   }
 
-  tagptr->tag=FPPTAG_INPUT;
-  tagptr->data=(void *)own_input;
+  struct fppIOCallbacks inputio, outputio;
+  inputio.gets = own_input;
+  outputio.putc = own_output;
+
+  tagptr->tag=FPPTAG_INPUTIO;
+  tagptr->data=(void *)&inputio;
+  tagptr++;
+
+  tagptr->tag=FPPTAG_OUTPUTIO;
+  tagptr->data=(void*)&outputio;
   tagptr++;
 
   if(i<argc) {
@@ -165,12 +175,16 @@ int main(int argc, char **argv)
     if(display)
       fprintf(stderr, "cpp: output: [stdout]\n");
 
-  tagptr->tag=FPPTAG_OUTPUT;
-  tagptr->data=(void *)own_output;
-  tagptr++;
-
   tagptr->tag=FPPTAG_ERROR;
   tagptr->data=(void *)own_error;
+  tagptr++;
+
+  struct fppFileSystemCallbacks filesystem;
+  filesystem.open = own_open;
+  filesystem.close = own_close;
+
+  tagptr->tag=FPPTAG_FILESYSTEMCALLBACKS;
+  tagptr->data=(void*)&filesystem;
   tagptr++;
 
   /* The LAST tag: */
@@ -193,21 +207,60 @@ int main(int argc, char **argv)
 
 
 FILE_LOCAL
-char *own_input(char *buffer, int size, void *userdata)
+char *own_input(void *userptr, char *buffer, int size)
 {
   return(fgets(buffer, size, stdin));
 }
 
 FILE_LOCAL
-void own_output(int c, void *userdata)
+int own_output(void *userptr, int c)
 {
   putchar(c);
+  return(0);
 }
 
 FILE_LOCAL
 void own_error(void *userdata, char *format, va_list arg)
 {
   vfprintf(stderr, format, arg);
+}
+
+FILE_LOCAL
+char *own_gets(void *userptr, char *str, int num)
+{
+	return fgets(str, num, (FILE *)userptr);
+}
+
+FILE_LOCAL
+int own_putc(void *userptr, int character)
+{
+	return fputc(character, (FILE *)userptr);
+}
+
+FILE_LOCAL
+struct fppIOCallbacks *own_open(void *userptr, const char *filename, const char *mode)
+{
+	FILE *file = fopen(filename, mode);
+	if (file)
+	{
+		struct fppIOCallbacks* cb = (struct fppIOCallbacks*)malloc(sizeof(struct fppIOCallbacks));
+		cb->userptr = (void*)file;
+		cb->gets = own_gets;
+		cb->putc = own_putc;
+		return cb;
+	}
+	
+	return NULL;
+}
+
+FILE_LOCAL
+int own_close(void *userptr, struct fppIOCallbacks *stream)
+{
+	if (!stream) return EOF;
+	FILE *file = (FILE *)stream->userptr;
+	int retval = fclose(file);
+	if (retval == 0) free(stream);
+	return retval;
 }
 
 FILE_LOCAL
