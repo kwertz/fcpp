@@ -35,6 +35,9 @@
  *
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct fppTag {
   int tag;
@@ -172,3 +175,7 @@ struct fppFileSystemCallbacks {
 #define FPPTAG_FILESYSTEMCALLBACKS 34
 
 int fppPreProcess(struct fppTag *);
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif

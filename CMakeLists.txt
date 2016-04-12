@@ -7,5 +7,9 @@ endif()
 
 add_library(fcpp STATIC cpp1.c cpp2.c cpp3.c cpp4.c cpp5.c cpp6.c)
 
-add_executable(usecpp usecpp.c)
-target_link_libraries(usecpp fcpp)
+option(FCPP_BUILD_STANDALONE "Build the standalone preprocessor executable")
+
+if (FCPP_BUILD_STANDALONE)
+	add_executable(usecpp usecpp.c)
+	target_link_libraries(usecpp fcpp)
+endif ()
