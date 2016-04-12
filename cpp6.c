@@ -501,7 +501,7 @@ ReturnCode getfile(struct Global *global,
   size = (int)strlen(name);                          /* File/macro name      */
 
   if(!size) {
-      name = "[stdin]";
+      name = "[input]";
       size = (int)strlen(name);
   }
 
