@@ -506,7 +506,7 @@ ReturnCode output(struct Global *global, int c)
 void Putchar(struct Global *global, int c)
 {
   /*
-   * Output one character to stdout or to output function!
+   * Output one character.
    */
   if(!global->out)
     return;
@@ -517,14 +517,13 @@ void Putchar(struct Global *global, int c)
 void Putstring(struct Global *global, char *string)
 {
   /*
-   * Output a string! One letter at a time to the Putchar routine!
+   * Output a string.
    */
 
   if(!string)
     return;
 
-  while(*string)
-    Putchar(global, *string++);
+  global->outputio->puts(global->outputio->userptr, string);
 }
 
 void Putint(struct Global *global, int number)

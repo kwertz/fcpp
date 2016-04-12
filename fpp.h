@@ -47,6 +47,7 @@ struct fppTag {
 struct fppIOCallbacks {
 	char *(*gets)(void *userptr, char *str, int num);
 	int (*putc)(void *userptr, int character);
+	int (*puts)(void* userptr, const char *str);
 	void *userptr;
 };
 

@@ -80,6 +80,7 @@ SOFTWARE.
 
 FILE_LOCAL char *own_input(void *, char *, int);
 FILE_LOCAL int own_output(void *, int);
+FILE_LOCAL int own_outputs(void *, const char*);
 FILE_LOCAL void own_error(void *, char *, va_list);
 FILE_LOCAL struct fppIOCallbacks *own_open(void *, const char *filename, const char *mode);
 FILE_LOCAL int own_close(void *, struct fppIOCallbacks *stream);
@@ -124,6 +125,7 @@ int main(int argc, char **argv)
   struct fppIOCallbacks inputio, outputio;
   inputio.gets = own_input;
   outputio.putc = own_output;
+  outputio.puts = own_outputs;
 
   tagptr->tag=FPPTAG_INPUTIO;
   tagptr->data=(void *)&inputio;
@@ -220,6 +222,12 @@ int own_output(void *userptr, int c)
 }
 
 FILE_LOCAL
+int own_outputs(void *userptr, const char* str)
+{
+	return fputs(str, stdout);
+}
+
+FILE_LOCAL
 void own_error(void *userdata, char *format, va_list arg)
 {
   vfprintf(stderr, format, arg);
@@ -238,6 +246,12 @@ int own_putc(void *userptr, int character)
 }
 
 FILE_LOCAL
+int own_puts(void *userptr, const char *str)
+{
+	return fputs(str, (FILE *)userptr);
+}
+
+FILE_LOCAL
 struct fppIOCallbacks *own_open(void *userptr, const char *filename, const char *mode)
 {
 	FILE *file = fopen(filename, mode);
@@ -247,6 +261,7 @@ struct fppIOCallbacks *own_open(void *userptr, const char *filename, const char 
 		cb->userptr = (void*)file;
 		cb->gets = own_gets;
 		cb->putc = own_putc;
+		cb->puts = own_puts;
 		return cb;
 	}
 	
