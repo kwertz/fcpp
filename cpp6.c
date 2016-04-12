@@ -1084,9 +1084,6 @@ void domsg(struct Global *global,
 #if defined(UNIX)
   else
     vfprintf(stderr, ErrorMessage[error], arg);
-#elif defined(AMIGA)
-  else
-    return;
 #endif
   Error(global, "\n");
 

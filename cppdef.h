@@ -93,15 +93,10 @@
 #define SYS_LATTICE		5
 #define SYS_ONYX		6
 #define SYS_68000		7
-#define SYS_AMIGADOS		8
 
 #ifndef HOST
 #ifdef	unix
 #define HOST			SYS_UNIX
-#else
-#ifdef	amiga
-#define HOST			SYS_AMIGADOS
-#endif
 #endif
 #endif
 
@@ -115,13 +110,6 @@
 /*
  * In order to predefine machine-dependent constants,
  * several strings are defined here:
- *
- * MACHINE	defines the target cpu (by name)
- * SYSTEM	defines the target operating system
- * COMPILER	defines the target compiler
- *
- *	The above may be #defined as "" if they are not wanted.
- *	They should not be #defined as NULL.
  *
  * LINE_PREFIX	defines the # output line prefix, if not "line"
  *		This should be defined as "" if cpp is to replace
@@ -168,9 +156,6 @@
  *		which is to be searched *before* the operating-system
  *		specific directories.
  */
-
-#define MACHINE 		"amiga", "m68000"
-#define SYSTEM			"amigados"
 
 
 /*

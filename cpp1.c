@@ -25,15 +25,6 @@ SOFTWARE.
 #include "cppdef.h"
 #include "cpp.h"
 
-#if defined(AMIGA)
-#include        <dos.h>
-#if defined(SHARED)
-int _OSERR=0;
-char *_ProgramName="junk";
-void __stdargs _XCEXIT(long a) { return; }
-#endif
-#endif
-
 FILE_LOCAL ReturnCode output(struct Global *, int); /* Output one character */
 FILE_LOCAL void sharp(struct Global *);
 INLINE FILE_LOCAL ReturnCode cppmain(struct Global *);
@@ -71,12 +62,7 @@ int fppPreProcess(struct fppTag *tags)
 
   /* names defined at cpp start */
   global->preset[0]="frexxcpp"; /* This is the Frexx cpp program */
-#if defined( amiga )
-  global->preset[1]="amiga";
-  global->preset[2]="m68000";
-  global->preset[3]="amigados";
-  global->preset[4]= NULL;              /* Must be last         */
-#elif defined( unix )
+#if defined( unix )
   global->preset[1]="unix";
   global->preset[2]= NULL;
 #endif

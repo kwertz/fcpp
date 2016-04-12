@@ -81,8 +81,7 @@ struct fppFileSystemCallbacks {
 #define FPPTAG_IGNORE_NONFATAL 3 /* data is TRUE or FALSE */
 
 /* To add an include directory to the include directory list: */
-#define FPPTAG_INCLUDE_DIR 4 /* data is directory name ending with a '/' (on
-				amiga a ':' is also valid) */
+#define FPPTAG_INCLUDE_DIR 4 /* data is directory name ending with a '/' */
 
 /* To define all machine specific built-in #defines, default is TRUE: */
 #define FPPTAG_BUILTINS 5 /* data is TRUE or FALSE */
