@@ -409,6 +409,9 @@ ReturnCode control( struct Global *global,
             Putstring( global, global->tokenbuf );
             Putchar( global, ' ' );
 
+            if( (c = skipws( global ) ) != '\n' && c != EOF_CHAR )
+                Putchar( global, c );
+
             while( (c = get( global ) ) != '\n' && c != EOF_CHAR )
                 Putchar( global, c );
 
